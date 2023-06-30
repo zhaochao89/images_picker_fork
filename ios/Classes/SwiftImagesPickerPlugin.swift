@@ -24,7 +24,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
     if call.method=="pick" {
       let args = call.arguments as? NSDictionary;
       let count = args!["count"] as! Int;
-      let language = args!["language"] as! String;
+//      let language = args!["language"] as! String;
       let pickType = args!["pickType"] as? String;
       let supportGif = args!["gif"] as! Bool;
       let maxTime = args!["maxTime"] as! Int;
@@ -35,10 +35,13 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
       let vc = UIApplication.shared.delegate!.window!!.rootViewController!;
       let ac = ZLPhotoPreviewSheet();
       let config = ZLPhotoConfiguration.default();
-      self.setLanguage(configuration: config, language: language);
+//      self.setLanguage(configuration: config, language: language);
       self.setConfig(configuration: config, pickType: pickType);
       config.maxSelectCount = count;
       config.allowSelectGif = supportGif;
+        //隐藏原图按钮，默认选中的选择的是原图
+      config.allowSelectOriginal = false;
+      config.alwaysRequestOriginal = true;
       config.maxSelectVideoDuration = maxTime;
       if cropOption != nil {
         config.allowEditImage = true;
@@ -100,7 +103,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
       ac.showPhotoLibrary(sender: vc);
     } else if call.method=="openCamera" {  // 相机拍照、录视频
       let args = call.arguments as? NSDictionary;
-      let language = args!["language"] as! String;
+//      let language = args!["language"] as! String;
       let pickType = args!["pickType"] as? String;
       let cropOption = args!["cropOption"] as? NSDictionary;
       let maxSize = args!["maxSize"] as? Int;
@@ -112,7 +115,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
 //      let cameraConfig = ZLCameraConfiguration();
       let config = ZLPhotoConfiguration.default();
       config.maxRecordDuration = maxTime ?? 15;
-      self.setLanguage(configuration: config, language: language);
+//      self.setLanguage(configuration: config, language: language);
       self.setConfig(configuration: config, pickType: pickType);
       if cropOption != nil {
         config.allowEditImage = true;
@@ -464,7 +467,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
     configuration.allowSlideSelect = false;
   }
   
-  private func setLanguage(configuration: ZLPhotoConfiguration, language: String) {
+  private func setLanguage(configuration: ZLPhotoUIConfiguration, language: String) {
     switch language {
     case "Language.Chinese":
       configuration.languageType = .chineseSimplified;
@@ -496,7 +499,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
   }
   
   private func setThemeColor(configuration: ZLPhotoConfiguration, colors: NSDictionary?) {
-    let theme = ZLPhotoThemeColorDeploy();
+//    let theme = ZLPhotoThemeColorDeploy();
 //    configuration.themeColorDeploy = theme;
   }
 }
