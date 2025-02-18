@@ -32,7 +32,8 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
       let cropOption = args!["cropOption"] as? NSDictionary;
       let theme = args!["theme"] as? NSDictionary;
       
-      let vc = UIApplication.shared.delegate!.window!!.rootViewController!;
+      // let vc = UIApplication.shared.delegate!.window!!.rootViewController!;
+      let vc =  self.topViewController()
       let ac = ZLPhotoPreviewSheet();
       let config = ZLPhotoConfiguration.default();
 //      self.setLanguage(configuration: config, language: language);
@@ -100,7 +101,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
       ac.cancelBlock = {
         result(nil);
       }
-      ac.showPhotoLibrary(sender: vc);
+      ac.showPhotoLibrary(sender: vc!);
     } else if call.method=="openCamera" {  // 相机拍照、录视频
       let args = call.arguments as? NSDictionary;
 //      let language = args!["language"] as! String;
@@ -502,4 +503,21 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
 //    let theme = ZLPhotoThemeColorDeploy();
 //    configuration.themeColorDeploy = theme;
   }
+  ///最顶层控制器
+    private func topViewController(_ viewController: UIViewController? = nil) -> UIViewController? {
+        let viewController = viewController ?? UIApplication.shared.keyWindow?.rootViewController
+        
+        if let navigationController = viewController as? UINavigationController,
+           !navigationController.viewControllers.isEmpty
+        {
+            return self.topViewController(navigationController.viewControllers.last)
+        } else if let tabBarController = viewController as? UITabBarController,
+                  let selectedController = tabBarController.selectedViewController
+        {
+            return self.topViewController(selectedController)
+        } else if let presentedController = viewController?.presentedViewController {
+            return self.topViewController(presentedController)
+        }
+        return viewController
+    }
 }
