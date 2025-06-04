@@ -34,7 +34,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
       
       // let vc = UIApplication.shared.delegate!.window!!.rootViewController!;
       let vc =  self.topViewController()
-      let ac = ZLPhotoPreviewSheet();
+      let ac = ZLPhotoPicker();
       let config = ZLPhotoConfiguration.default();
 //      self.setLanguage(configuration: config, language: language);
       self.setConfig(configuration: config, pickType: pickType);
@@ -301,7 +301,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
   private func resolveVideo(url: URL)->[String: StringOrInt] {
     var dir = [String: StringOrInt]();
     
-    let urlStr = url.absoluteString;
+    let urlStr = url.relativePath;
     let path = (urlStr as NSString).substring(from: 7);
     dir.updateValue(path, forKey: "path");
     
