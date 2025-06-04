@@ -301,8 +301,9 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
   private func resolveVideo(url: URL)->[String: StringOrInt] {
     var dir = [String: StringOrInt]();
     
-    let urlStr = url.relativePath;
-    let path = (urlStr as NSString).substring(from: 7);
+    let path = url.relativePath;
+    //打印path
+    print("resolveVideo path: \(path)");
     dir.updateValue(path, forKey: "path");
     
     // 获取视频封面图
