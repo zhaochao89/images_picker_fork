@@ -60,7 +60,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
       
       self.setThemeColor(configuration: config, colors: theme);
       
-      ac.selectImageBlock = { (images, assets, isOriginal) in
+      ac.selectImageBlock = { (models, isOriginal) in
         var resArr = [[String: StringOrInt]]();
         let manager = PHImageManager.default();
         let options = PHVideoRequestOptions();
@@ -68,35 +68,37 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
         options.deliveryMode = .automatic;
         options.version = .original;
         
-        let group = DispatchGroup();
-        for (index, asset) in assets.enumerated() {
-          group.enter();
-          if asset.mediaType==PHAssetMediaType.image {
-            let image = images[index];
-            if self.getImageType(asset: asset)=="gif" && supportGif { // gif 取原路径
-              self.resolveImage(asset: asset, resultHandler: { dir in
-                resArr.append(dir);
-                group.leave();
-              });
-            } else {
-              resArr.append(self.resolveImage(image: image, maxSize: maxSize));
-              group.leave();
-            }
-          } else if asset.mediaType==PHAssetMediaType.video {
-            manager.requestAVAsset(forVideo: asset, options: options, resultHandler: { avasset,audioMix,info  in
-              let videoUrl = avasset as! AVURLAsset;
-              let url = videoUrl.url;
-              // TODO: mov to mp4
-              resArr.append(self.resolveVideo(url: url));
-              group.leave();
-            })
-          } else {
-            group.leave();
+          let group = DispatchGroup();
+          
+          for model in models {
+              let asset = model.asset
+              group.enter();
+              if asset.mediaType==PHAssetMediaType.image {
+                  let image = model.image
+                  if self.getImageType(asset: asset)=="gif" && supportGif { // gif 取原路径
+                      self.resolveImage(asset: asset, resultHandler: { dir in
+                          resArr.append(dir);
+                          group.leave();
+                      });
+                  } else {
+                      resArr.append(self.resolveImage(image: image, maxSize: maxSize));
+                      group.leave();
+                  }
+              } else if asset.mediaType==PHAssetMediaType.video {
+                  manager.requestAVAsset(forVideo: asset, options: options, resultHandler: { avasset,audioMix,info  in
+                      let videoUrl = avasset as! AVURLAsset;
+                      let url = videoUrl.url;
+                      // TODO: mov to mp4
+                      resArr.append(self.resolveVideo(url: url));
+                      group.leave();
+                  })
+              } else {
+                  group.leave();
+              }
           }
-        }
-        group.notify(queue: .main) {
-          result(resArr);
-        }
+          group.notify(queue: .main) {
+              result(resArr);
+          }
       }
       ac.cancelBlock = {
         result(nil);
@@ -115,7 +117,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
       let camera = ZLCustomCamera();
 //      let cameraConfig = ZLCameraConfiguration();
       let config = ZLPhotoConfiguration.default();
-      config.maxRecordDuration = maxTime ?? 15;
+//      config.maxRecordDuration = maxTime ?? 15;
 //      self.setLanguage(configuration: config, language: language);
       self.setConfig(configuration: config, pickType: pickType);
       if cropOption != nil {
