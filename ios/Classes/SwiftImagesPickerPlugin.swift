@@ -34,7 +34,7 @@ public class SwiftImagesPickerPlugin: NSObject, FlutterPlugin {
       
       // let vc = UIApplication.shared.delegate!.window!!.rootViewController!;
       let vc =  self.topViewController()
-      let ac = ZLPhotoPicker();
+      let ac = ZLPhotoPreviewSheet();
       let config = ZLPhotoConfiguration.default();
 //      self.setLanguage(configuration: config, language: language);
       self.setConfig(configuration: config, pickType: pickType);
